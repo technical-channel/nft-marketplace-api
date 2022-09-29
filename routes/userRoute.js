@@ -1,8 +1,8 @@
-const express = require("express")
+import express from "express"
 const router = express()
 
-const User = require("../models/userModel")
-const Wallet = require("../models/walletModel")
+import User from "../models/userModel.js"
+import Wallet from "../models/walletModel.js"
 
 router.post("/check-wallet", async (req, res) => {
     await Wallet.find({address: req.body.address})
@@ -90,4 +90,4 @@ router.post("/link-wallet", async (req, res) => {
     }
 })
 
-module.exports = router
+export default router

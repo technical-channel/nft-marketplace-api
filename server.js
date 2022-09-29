@@ -1,27 +1,39 @@
 //libraries
-const express = require("express")
-const mongoose = require("mongoose")
-require("dotenv").config();
-const cors = require("cors")
-const {graphqlHTTP} = require("express-graphql")
-const bodyParser = require("body-parser")
+import express from "express"
+import mongoose from "mongoose";
+import dotenv from "dotenv"
+import cors from "cors"
+import { ApolloServer, gql } from "apollo-server-express";
+import bodyParser from "body-parser"
+import {typeDefs, resolvers} from "./schema/schema.js"
+
+dotenv.config();
 
 //modules
-const dbConfig = require("./config/database.config.js")
-const schema = require("./schema/schema")
-const nftRouter = require("./routes/nftRoute")
-const userRouter = require("./routes/userRoute")
+import dbConfig from "./config/database.config.js"
+// import ethersRouter from "./routes/ethersRoute.js"
+import userRouter from "./routes/userRoute.js"
+
+
+const apolloServer = new ApolloServer({
+  typeDefs,
+  resolvers
+});
+
+await apolloServer.start();
 
 const app = express();
 app.use(cors())
-
 //Middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded())
+apolloServer.applyMiddleware({ app });
+
 
 mongoose.Promise = global.Promise;
 //Db Connection
-mongoose.connect(dbConfig.url, {
+console.log(dbConfig)
+mongoose.connect(dbConfig, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -32,16 +44,8 @@ mongoose.connect(dbConfig.url, {
     process.exit()
 })
 
-app.use(
-    "/graphql",
-    graphqlHTTP({
-        schema,
-        graphiql: process.env.NODE_ENV = "development",
-    })
-)
-
 //Routes
-app.use("/api/nft", nftRouter)
+// app.use("/api/ethers", ethersRouter)
 app.use("/api/user", userRouter)
 
 // listen for requests
