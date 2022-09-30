@@ -11,7 +11,7 @@ dotenv.config();
 
 //modules
 import dbConfig from "./config/database.config.js"
-// import ethersRouter from "./routes/ethersRoute.js"
+import ethersRouter from "./routes/ethersRoute.js"
 import userRouter from "./routes/userRoute.js"
 
 
@@ -45,7 +45,7 @@ mongoose.connect(dbConfig, {
 })
 
 //Routes
-// app.use("/api/ethers", ethersRouter)
+app.use("/api/ethers", ethersRouter)
 app.use("/api/user", userRouter)
 
 // listen for requests
