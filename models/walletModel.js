@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+import mongoose from "mongoose"
 
 const walletSchema = mongoose.Schema({
     address: {
@@ -16,4 +16,4 @@ const walletSchema = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model("Wallet", walletSchema);
+export default mongoose.model("Wallet", walletSchema)

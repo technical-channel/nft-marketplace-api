@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+import mongoose from "mongoose"
 
 const nftSchema = mongoose.Schema({
         name: {
@@ -31,4 +31,4 @@ const nftSchema = mongoose.Schema({
     }
 );
 
-module.exports = mongoose.model("Nft", nftSchema)
+export default mongoose.model("Nft", nftSchema)
