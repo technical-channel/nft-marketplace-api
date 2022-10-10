@@ -3,7 +3,7 @@ import {gql} from "apollo-server-express";
 
 export const nftTypeDefs = gql`
     type Nft {
-      id: ID
+      _id: ID
       name: String
       tokenId: String
       url: String
@@ -43,23 +43,26 @@ export const nftResolvers = {
       const availability = args.availability
 
       const filters = {}
-      collections !== "" ? filters.collections = collections : null;
-      team !== "" ? filters.team = team : null;
-      athlete !== "" ? filters.athlete = athlete : null;
-      musician !== "" ? filters.musician = musician : null;
-      artist !== "" ? filters.artist = artist : null;
-      availability !== "" ? filters.availability = availability : null;
+      collections !== "" ? filters.collections = collections.toLowerCase() : null;
+      team !== "" ? filters.teams = team.toLowerCase() : null;
+      athlete !== "" ? filters.athlete = athlete.toLowerCase() : null;
+      musician !== "" ? filters.musician = musician.toLowerCase() : null;
+      artist !== "" ? filters.artist = artist.toLowerCase() : null;
+      availability !== "" ? filters.availability = availability.toLowerCase() : null;
 
+      let data;
       await NftModel.aggregate([
         {
           $match: filters
         }
-      ]).then((res) => {
-        return res;
-      })
+      ])
+        .then((res) => {
+          data = res
+        })
         .catch((err) => {
           console.log(err)
         })
+      return data;
     }
   },
   Mutation: {
