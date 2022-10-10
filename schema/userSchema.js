@@ -49,7 +49,7 @@ export const userResolvers = {
     },
 
     wallet: async (root, args) => {
-      const data = await WalletModel.findOne({address: args.walletAddress})
+      const data = await WalletModel.findOne({address: args.address})
       return data
     },
 

@@ -49,6 +49,6 @@ app.use("/api/ethers", ethersRouter)
 app.use("/api/user", userRouter)
 
 // listen for requests
-app.listen(8080, () => {
-  console.log("Server is listening on port 8080");
+app.listen(5000, () => {
+  console.log("Server is listening on port 5000");
 });
