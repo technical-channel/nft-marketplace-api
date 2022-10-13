@@ -1,5 +1,7 @@
 import NftModel from "../models/nftModel.js"
-import {gql} from "apollo-server-express";
+import { gql } from "apollo-server-express";
+import Web3 from "web3"
+import { ChainsInfo } from "../smart-config/config-chains.js";
 
 export const nftTypeDefs = gql`
     type Nft {
@@ -18,22 +20,27 @@ export const nftTypeDefs = gql`
       musician: String
       artist: String
       availability: String
+      isMarketPlace: Boolean
+      price: Float
     }
     type Query {
         nfts: [Nft]
         filterNfts(collections: String, team: String, athlete: String, musician: String, artist: String, availability: String): [Nft]
+        getNftsOfUser(creatorAddress: String): [Nft]
+        searchNfts(key: String): [Nft]
     }
     type Mutation {
       createNft(name: String, tokenId: String, url: String, imageUrl: String, chainId: Int, network: String, collectionAddress: String, creatorAddress: String): Nft
+      putOnSale(collectionAddress: String, tokenId: String, isMarketPlace: Boolean, price: Float) : Nft
     }
 `
-
 export const nftResolvers = {
   Query: {
     nfts: async () => {
       const data = await NftModel.find()
       return data;
     },
+
     filterNfts: async (root, args) => {
       const collections = args.collections
       const team = args.team
@@ -49,6 +56,7 @@ export const nftResolvers = {
       musician !== "" ? filters.musician = musician.toLowerCase() : null;
       artist !== "" ? filters.artist = artist.toLowerCase() : null;
       availability !== "" ? filters.availability = availability.toLowerCase() : null;
+      filters.isMarketPlace = true
 
       let data;
       await NftModel.aggregate([
@@ -62,7 +70,18 @@ export const nftResolvers = {
         .catch((err) => {
           console.log(err)
         })
+      console.log(ChainsInfo)
       return data;
+    },
+
+    getNftsOfUser: async (root, args) => {
+      const nfts = await NftModel.find({ creatorAddress: args.creatorAddress })
+      return nfts
+    },
+    searchNfts: async (root, args) => {
+      const key = args.key;
+      const nfts = await NftModel.find({ name: { $regex: key, $options: "i" } })
+      return nfts;
     }
   },
   Mutation: {
@@ -78,6 +97,11 @@ export const nftResolvers = {
         collectionAddress: args.collectionAddress
       })
       await nft.save()
+      return nft;
+    },
+
+    putOnSale: async (root, args) => {
+      let nft = NftModel.findOneAndUpdate({ tokenId: args.tokenId, collectionAddress: args.collectionAddress }, { isMarketPlace: args.isMarketPlace, price: args.price });
       return nft;
     }
   }

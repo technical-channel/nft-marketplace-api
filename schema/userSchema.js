@@ -12,6 +12,7 @@ export const userTypeDefs = gql`
       bg_image: String
       twitterUrl: String
       facebookUrl: String
+      isVerify: Boolean
       wallets: [Wallet]
     }
 
@@ -31,7 +32,7 @@ export const userTypeDefs = gql`
     }
 
     type Mutation {
-      signUp(displayName: String, username: String, walletAddress: String): User
+      signUp(displayName: String, username: String, walletAddress: String, isVerify: Boolean): User
       linkWallet(walletAddress: String, userId: String): Wallet
       updateUser(
         userId: String,
@@ -42,6 +43,7 @@ export const userTypeDefs = gql`
         bg_image: String,
         twitterUrl: String,
         facebookUrl: String
+        isVerify: Boolean
       ) : User
     }
 `
@@ -86,6 +88,7 @@ export const userResolvers = {
         bg_image: args.bg_image,
         twitterUrl: args.twitterUrl,
         facebookUrl: args.facebookUrl,
+        isVerify: args.isVerify,
         wallets: []
       })
       const existingWallet = await WalletModel.findOne({address: args.walletAddress})

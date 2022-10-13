@@ -54,6 +54,14 @@ const nftSchema = mongoose.Schema({
         availability: {
             type: String,
             default: ""
+        },
+        isMarketPlace: {
+            type: Boolean,
+            default: false
+        },
+        price: {
+            type: Number,
+            default: 0
         }
     },
     {
