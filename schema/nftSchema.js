@@ -1,7 +1,7 @@
 import NftModel from "../models/nftModel.js"
-import { gql } from "apollo-server-express";
+import {gql} from "apollo-server-express";
 import Web3 from "web3"
-import { ChainsInfo } from "../smart-config/config-chains.js";
+import {ChainsInfo} from "../smart-config/config-chains.js";
 
 export const nftTypeDefs = gql`
     type Nft {
@@ -30,7 +30,7 @@ export const nftTypeDefs = gql`
         searchNfts(key: String): [Nft]
     }
     type Mutation {
-      createNft(name: String, tokenId: String, url: String, imageUrl: String, chainId: Int, network: String, collectionAddress: String, creatorAddress: String): Nft
+      createNft(name: String, tokenId: String, url: String, imageUrl: String, chainId: Int, network: String, collectionAddress: String, creatorAddress: String, collections: String, teams: String, athlete: String, musician: String, artist: String, availability: String): Nft
       putOnSale(collectionAddress: String, tokenId: String, isMarketPlace: Boolean, price: Float) : Nft
     }
 `
@@ -75,12 +75,12 @@ export const nftResolvers = {
     },
 
     getNftsOfUser: async (root, args) => {
-      const nfts = await NftModel.find({ creatorAddress: args.creatorAddress })
+      const nfts = await NftModel.find({creatorAddress: args.creatorAddress})
       return nfts
     },
     searchNfts: async (root, args) => {
       const key = args.key;
-      const nfts = await NftModel.find({ name: { $regex: key, $options: "i" } })
+      const nfts = await NftModel.find({name: {$regex: key, $options: "i"}})
       return nfts;
     }
   },
@@ -94,14 +94,20 @@ export const nftResolvers = {
         creatorAddress: args.creatorAddress,
         chainId: args.chainId,
         network: args.network,
-        collectionAddress: args.collectionAddress
+        collectionAddress: args.collectionAddress,
+        collections: args.collections,
+        teams: args.teams,
+        athlete: args.athlete,
+        musician: args.musician,
+        artist: args.artist,
+        availability: args.availability
       })
       await nft.save()
       return nft;
     },
 
     putOnSale: async (root, args) => {
-      let nft = NftModel.findOneAndUpdate({ tokenId: args.tokenId, collectionAddress: args.collectionAddress }, { isMarketPlace: args.isMarketPlace, price: args.price });
+      let nft = NftModel.findOneAndUpdate({tokenId: args.tokenId, collectionAddress: args.collectionAddress}, {isMarketPlace: args.isMarketPlace, price: args.price});
       return nft;
     }
   }
