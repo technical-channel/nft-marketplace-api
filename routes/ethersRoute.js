@@ -2,7 +2,9 @@ import express from "express"
 import abi from "../Contracts/Abi/abi.json" assert { type: "json" };
 import { ethers } from "ethers";
 const router = express();
+import { ThirdwebStorage } from "@thirdweb-dev/storage";
 
+const storage = new ThirdwebStorage();
 import Web3 from "web3"
 
 const FROM_ADDRESS = "0xc73b17179bf0c59cd5860bb25247d1d1092c1088"
@@ -12,16 +14,8 @@ const web3_ = new Web3("https://mainnet.infura.io/v3/9c48d1f781404552b1a017d597f
 const contract = new web3_.eth.Contract(abi, CONTRACT_ADDRESS);
 
 router.get("/", async (req, res) => {
-    const name = await contract.getPastEvents("Transfer", {
-        filter: {
-          // from: "0xf6b5F6B9F1624C6426d0A0bb1eBe7D8dBff1F9a3",
-          tokenId: 4636
-        },
-        fromBlock: 0,
-        toBlock: "latest"
-    }, function(error, events){ console.log(events); }).then((data) => {
-      return res.json(data)
-    });
+    const data = await storage.downloadJSON("ipfs://QmctumRBxMbYnpwojvk7dEAx6u2tpLdHd9kvhxbbb9iQ5N/0");
+    return res.send(data);
 })
 
 export default router

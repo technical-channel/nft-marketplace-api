@@ -4,14 +4,20 @@ import {gql} from "apollo-server-express";
 
 export const userTypeDefs = gql`
     type User {
-      id: ID
+      _id: ID
       displayName: String
       username: String
+      avatar_url: String
+      about_details: String
+      bg_image: String
+      twitterUrl: String
+      facebookUrl: String
+      isVerify: Boolean
       wallets: [Wallet]
     }
 
     type Wallet {
-      id: ID
+      _id: ID
       address: String
       isPrimary: Boolean
       user: User
@@ -19,28 +25,41 @@ export const userTypeDefs = gql`
 
     type Query {
       users: [User]
-      user(id: ID): User
+      user(walletAddress: String): Wallet
       wallets: [Wallet]
       wallet(address: String): Wallet
       signIn(walletAddress: String): Wallet
     }
 
     type Mutation {
-      signUp(displayName: String, username: String, walletAddress: String): User
+      signUp(displayName: String, username: String, walletAddress: String, isVerify: Boolean): User
       linkWallet(walletAddress: String, userId: String): Wallet
+      updateUser(
+        userId: String,
+        displayName: String,
+        username: String,
+        avatar_url: String,
+        about_details: String,
+        bg_image: String,
+        twitterUrl: String,
+        facebookUrl: String
+        isVerify: Boolean
+      ) : User
     }
 `
 
 export const userResolvers = {
   Query: {
     users: async () => {
-      const data = await UserModel.find().populate("wallets")
+      const data = await UserModel.findOne().populate("wallets")
       return data;
     },
 
     user: async (root, args) => {
-      const data = await UserModel.findById(args.id)
-      return data;
+      //const data = await WalletModel.findOne({wallets: {$in: [args.walletAddress]}})
+      const data = await WalletModel.findOne({address: args.walletAddress}).populate("user")
+      console.log(data)
+      return data
     },
 
     wallets: async () => {
@@ -49,7 +68,7 @@ export const userResolvers = {
     },
 
     wallet: async (root, args) => {
-      const data = await WalletModel.findOne({address: args.walletAddress})
+      const data = await WalletModel.findOne({address: args.address})
       return data
     },
 
@@ -64,6 +83,12 @@ export const userResolvers = {
       const user = new UserModel({
         displayName: args.displayName,
         username: args.username,
+        avatar_url: args.avatar_url,
+        about_details: args.about_details,
+        bg_image: args.bg_image,
+        twitterUrl: args.twitterUrl,
+        facebookUrl: args.facebookUrl,
+        isVerify: args.isVerify,
         wallets: []
       })
       const existingWallet = await WalletModel.findOne({address: args.walletAddress})
@@ -106,6 +131,11 @@ export const userResolvers = {
           return newWallet;
         }
       }
-    }
+    },
+
+    updateUser: async (root, args) => {
+      const user = UserModel.findByIdAndUpdate(args.userId, args)
+      return user;
+    },
   }
 }

@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@thirdweb-dev/sdk": "^3.1.2",
+    "@thirdweb-dev/storage": "^1.0.4",
     "apollo-server": "^3.10.2",
     "apollo-server-express": "^3.10.2",
     "body-parser": "^1.20.0",

@@ -13,6 +13,9 @@ const nftSchema = mongoose.Schema({
             type: String,
             required: true
         },
+        imageUrl: {
+            type: String,
+        },
         chainId: {
             type: Number,
             required: true
@@ -24,6 +27,41 @@ const nftSchema = mongoose.Schema({
         collectionAddress: {
             type: String,
             required: true
+        },
+        creatorAddress: {
+            type: String,
+        },
+        collections: {
+            type: String,
+            default: ""
+        },
+        teams: {
+            type: String,
+            default: ""
+        },
+        athlete: {
+            type: String,
+            default: ""
+        },
+        musician: {
+            type: String,
+            default: ""
+        },
+        artist: {
+            type: String,
+            default: ""
+        },
+        availability: {
+            type: String,
+            default: ""
+        },
+        isMarketPlace: {
+            type: Boolean,
+            default: false
+        },
+        price: {
+            type: Number,
+            default: 0
         }
     },
     {
